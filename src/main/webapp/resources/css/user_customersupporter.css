@@ -1,0 +1,253 @@
+body{
+/* 	background: #f8f8f8; */
+}
+
+
+/* #f5f5f5태두리색깔 */
+#wrapper{/*자추잦는 도움말부터 비공개 문의 내역 까지의 css*/
+/* 	box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15); */
+/* 	border:0.5px solid #f5f5f5; */
+	
+	width: 900px;
+	height: auto;
+	background: #ffffff;
+	margin: 100px auto 30px auto;
+}
+#subject{
+	padding-left: 10px;
+	height:50px;
+	font-size: 25px;
+	font-weight: bold;
+/* 	background: #e7f2fb; */
+	line-height: 50px;
+/* 	border:0.5px solid #efefef; */
+}
+
+.qna{
+	margin-bottom: 50px;
+}
+
+.content_flex{
+	display: flex;
+}
+/* e7f2fb */
+.content{
+	padding-left:10px;
+	color: gray;
+	font-weight: bold;
+	font-size:20px;
+	border-radius:20px;
+	border:0.5px solid #c8c8c8;
+	height: 140px;
+	padding-top: 10px;
+	margin: 10px 15px 10px 15px;
+	cursor: pointer;
+	flex:4;
+}
+
+
+.more{
+	margin: 10px 10px 10px 10px;
+	text-align: center;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+
+
+.modal {
+  background-color:rgba(0,0,0,.3); 
+  justify-content:center;
+  align-items:center;    
+  position:fixed; 
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;           
+  display:none; 
+  padding:15px; 
+}
+
+.modal.show {
+  display: block;
+}
+
+.ex {
+  margin-top: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display:none;
+  width: 400px;
+  height: 600px;
+
+  padding: 40px;
+
+  text-align: center;
+
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
+
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.qna_flex{
+	display: flex;
+}
+#qna_button{
+	height: 70px;
+	font-size: 25px;
+	flex:2;
+	text-align: center;
+	line-height: 70px;
+	cursor: pointer;
+}
+
+.qna_button1{
+	color: white;
+	background:#3d6dd6;
+}
+
+.qna_button2{
+	color: black;
+	background: white;
+/* 	margin-top: 5px; */
+}
+
+.none_sid{
+	text-align: center;
+	font-size: 30px;
+}
+.none_sid>a{
+	text-decoration: none;
+	color: purple;
+}
+
+.private_subject{
+	margin:auto;
+	width:880px;
+	font-size: 30px;
+/* 	background: #e7f2fb; */
+	font-weight: bold;
+	padding-left: 20px;
+	border-bottom: 0.5px solid #c8c8c8;
+	border-top: 0.5px solid #c8c8c8;
+}
+.private_qna_subject{
+	text-align:center;
+	float:left;
+	width: 25%;
+}
+#private_qna_subject01{
+	text-align:center;
+	width: 25%;
+}
+
+.private_flex{
+	float:left;
+	width:898px;
+	background: white;
+	transition: all 0.2s linear;
+	cursor: pointer;
+	text-overflow: ellipsis;
+	border-bottom: 0.5px solid #c8c8c8;
+	border-top: 0.5px solid #c8c8c8;
+	
+}
+
+.private_content{
+	text-align:center;
+	float:left;
+	line-height:70px;
+	height:70px;
+	width:25%;
+	font-size: 15px;
+	font-family: sans-serif;
+	text-overflow: ellipsis;
+	
+}
+
+#private_content01{
+	float:left;
+	text-align:center;
+	width: 25%;
+}
+
+.private_flex:hover{
+	border: 0.5px solid rgba(255,255,204,0.5);
+	background: #f5f5f5;
+	border-bottom: 0.5px solid #c8c8c8;
+}
+
+
+.public_subject{
+	margin:auto;
+	width:880px;
+	font-size: 30px;
+/* 	background: #e7f2fb; */
+	font-weight: bold;
+	padding-left: 20px;
+	border-top: 0.5px solid #c8c8c8;
+}
+.public_subject_flex{
+	font-size:18px;
+	line-height:40px;	
+	height:40px;
+	width: 898px;
+/* 	border-bottom: 0.5px solid #c8c8c8; */
+	border-top: 0.5px solid #c8c8c8;
+}
+
+.public_qna_subject{
+	text-align:center;
+	float:left;
+	width: 25%;
+}
+
+
+.public_content{
+	text-align:center;
+	float:left;
+	line-height:70px;
+	height:70px;
+	width:25%;
+	font-size: 15px;
+	font-family: sans-serif;
+	text-overflow: ellipsis;
+}
+
+.page{
+	text-align: center;
+	line-height: 100px;
+}
+.none {
+	text-align: center;
+	font-size: 20px;
+	line-height: 40px;
+}
+
+#pageButton{
+	border: none;
+	background: #e7f2fb;
+	color: black;
+}
+
+.writeqna{
+	margin-left: 20px;
+	
+	
+}
+
+.askhelp{
+	border:0.5px solid #e7f2fb;
+}
+
+.qnahelp{
+		border:0.5px solid #e7f2fb;
+		margin-top: 30px;
+}
+.public_content_flex{
+	overflow: hidden;
+	line-height: 40px;
+}

@@ -1,0 +1,73 @@
+@charset "UTF-8";
+
+.cancelSection{
+	width: 900px;
+	margin: 100px auto;
+	text-align: center;
+}
+
+.buttonSection{
+	padding: 100px;
+}
+
+.buttonSection{
+	padding: 100px;
+}
+
+.buttonSection input[type=button]{
+	width: 300px;
+	height: 50px;
+	border-color: #199db3;
+    border-bottom-color: #168da1;
+    border-right-color: #168da1;
+    background-color: #199db3;
+    
+    position: relative;
+    padding: 0 7px;
+    text-align: center;
+    text-indent: 0;
+    border-radius: 3px;
+    border: solid 1px #ebebeb;
+    cursor: pointer;
+    
+    /* 폰트 */
+    font-size: 22px;
+    color: white;
+    font-weight: bold;
+}
+
+
+.buttonSection input[type=button]:hover{
+	font-weight: thin;
+	color: #fafafa;
+	border-color: #719d9d;
+	background: #1981b3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

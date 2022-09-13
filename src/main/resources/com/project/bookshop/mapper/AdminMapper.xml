@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.false//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.project.bookshop.mapper.AdminMapper">
+
+	<select id="OrderNoticeCount" resultType="java.lang.Integer">
+		<choose>
+			<when test="order_status.equals('결제완료')">
+				SELECT COUNT(*) FROM ord
+				WHERE order_date = CURDATE() AND order_status="결제완료"			
+			</when>
+			<when test="order_status.equals('결제취소')">
+				SELECT COUNT(*) FROM ord
+				WHERE order_date = CURDATE() AND order_status="결제취소"			
+			</when>
+		</choose>
+	</select>
+	
+	<select id="ProductNoticeCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM product
+		WHERE pd_quan = 0
+	</select>
+	
+	<select id="QnaNoticeCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM qna
+		WHERE qna_type=#{qna_type} AND qna_rep IS NULL
+	</select>
+	
+	<select id="getOrderListCount" resultType="java.lang.Integer">
+		<choose>
+			<when test="order_status.equals('all')">
+				SELECT COUNT(*) FROM ord
+				WHERE order_date>=#{start_date} AND order_date&lt;=#{end_date} AND order_price>=#{min_price} AND order_price&lt;=#{max_price}
+			</when>
+			<when test="order_status.equals('yes')">
+				SELECT COUNT(*) FROM ord
+				WHERE order_date>=#{start_date} AND order_date&lt;=#{end_date} AND order_price>=#{min_price} AND order_price&lt;=#{max_price} AND order_status="결제완료"
+			</when>
+			<when test="order_status.equals('no')">
+				SELECT COUNT(*) FROM ord
+				WHERE order_date>=#{start_date} AND order_date&lt;=#{end_date} AND order_price>=#{min_price} AND order_price&lt;=#{max_price} AND order_status="결제취소"
+			</when>
+			<when test="order_status.equals('배송완료')">
+				SELECT COUNT(*) FROM ord
+				WHERE order_date>=#{start_date} AND order_date&lt;=#{end_date} AND order_price>=#{min_price} AND order_price&lt;=#{max_price} AND order_status="배송완료"
+			</when>
+		</choose>
+	</select>
+	
+	<select id="getOrderList" resultType="com.project.bookshop.vo.OrdVO">
+				SELECT * FROM ord o JOIN user u ON o.order_user_email = u.user_email
+		<choose>
+			<when test="order_status.equals('all')">
+				WHERE o.order_date>=#{start_date} AND o.order_date&lt;=#{end_date} AND o.order_price>=#{min_price} AND o.order_price&lt;=#{max_price}
+			</when>
+			<when test="order_status.equals('yes')">
+				SELECT * FROM ord o
+				WHERE o.order_date>=#{start_date} AND o.order_date&lt;=#{end_date} AND o.order_price>=#{min_price} AND o.order_price&lt;=#{max_price} AND o.order_status="결제완료"
+			</when>
+			<when test="order_status.equals('no')">
+				SELECT * FROM ord
+				WHERE o.order_date>=#{start_date} AND o.order_date&lt;=#{end_date} AND o.order_price>=#{min_price} AND o.order_price&lt;=#{max_price} AND o.order_status="결제취소"
+			</when>
+			<when test="order_status.equals('배송완료')">
+				SELECT * FROM ord
+				WHERE o.order_date>=#{start_date} AND o.order_date&lt;=#{end_date} AND o.order_price>=#{min_price} AND o.order_price&lt;=#{max_price} AND o.order_status="배송완료"
+			</when>
+		</choose>
+		ORDER BY order_num DESC 
+		LIMIT #{ordPageInfo.startRow},#{ordPageInfo.listLimit}
+	</select>
+	
+	<update id="orderProcess">
+		UPDATE ord SET order_status="배송완료" WHERE order_num=#{order_num}
+	</update>
+	
+	<select id="getOrderDetail" resultType="com.project.bookshop.vo.OrdDetailVO">
+		SELECT o.order_pd_num, o.order_quan, o.order_pd_price*o.order_quan AS order_pd_price, p.pd_file, p.pd_subject
+		FROM ordDetail o JOIN product p
+		ON o.order_pd_num = p.pd_num AND o.order_num=#{order_num}
+	</select>
+	
+	<select id="getProductListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM product
+		<choose>
+			<when test="pd_quan.equals('all') and pd_type.equals('all')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_quan.equals('all') and pd_type.equals('국내도서')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_quan=0 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_quan.equals('all') and pd_type.equals('해외도서')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_quan=0 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_quan.equals('false') and pd_type.equals('all')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_quan=0 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('국내도서') and pd_quan.equals('false')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="국내도서" AND pd_quan=0 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('해외도서') and pd_quan.equals('false')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="해외도서" AND pd_quan=0 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('all') and pd_quan.equals('true')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_quan>=true AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('국내도서') and pd_quan.equals('true')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="국내도서" AND pd_quan>=1 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('해외도서') and pd_quan.equals('true')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="해외도서" AND pd_quan>=1 AND pd_subject LIKE #{search_input}
+			</when>
+		</choose>
+	</select>
+	
+	<select id="getProductList" resultType="com.project.bookshop.vo.ProductVO">
+		SELECT * FROM product
+		<choose>
+			<when test="pd_type.equals('all') and pd_quan.equals('all')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('국내도서') and pd_quan.equals('all')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="국내도서" AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('해외도서') and pd_quan.equals('all')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="해외도서" AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('all') and pd_quan.equals('false')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_quan=0 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('국내도서') and pd_quan.equals('false')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="국내도서" AND pd_quan=0 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('해외도서') and pd_quan.equals('false')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="해외도서" AND pd_quan=0 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('all') and pd_quan.equals('true')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_quan>=1 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('국내도서') and pd_quan.equals('true')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="국내도서" AND pd_quan>=1 AND pd_subject LIKE #{search_input}
+			</when>
+			
+			<when test="pd_type.equals('해외도서') and pd_quan.equals('true')">
+				WHERE pd_date>=#{start_date} AND pd_date&lt;=#{end_date} AND pd_type="해외도서" AND pd_quan>=1 AND pd_subject LIKE #{search_input}
+			</when>
+		</choose>
+		ORDER BY pd_num DESC LIMIT #{pdPageInfo.startRow},#{pdPageInfo.listLimit}
+	</select>
+	
+	<select id="maxProduct" resultType="java.lang.Integer">
+		SELECT MAX(pd_num) FROM product
+	</select>
+	
+	<insert id="insertProduct">
+		INSERT INTO product VALUES(
+		#{num},#{product.pd_type},#{product.pd_name},#{product.pd_price},#{product.pd_quan},
+		#{product.pd_file},#{product.pd_subject},#{product.pd_content},0,now()
+		)
+	</insert>
+	
+	<select id="getProductDetail" resultType="com.project.bookshop.vo.ProductVO">
+		SELECT * FROM product
+		WHERE pd_num=#{pd_num}
+	</select>
+	
+	<update id="productUpdate">
+		UPDATE product 
+		SET pd_type=#{product.pd_type}, pd_name=#{product.pd_name}, pd_price=#{product.pd_price},
+		pd_quan=#{product.pd_quan}, pd_file=#{product.pd_file}, pd_subject=#{product.pd_subject}, pd_content=#{product.pd_content}
+		WHERE pd_num=#{product.pd_num}
+	</update>
+	
+	<delete id="productDelete">
+		DELETE FROM product WHERE pd_num=#{pd_num}
+	</delete>
+	
+	<select id="getQnaListCount" resultType="java.lang.Integer">
+				SELECT COUNT(*) FROM qna 
+				 WHERE qna_date >= #{startDate} AND qna_date &lt;= #{endDate} AND
+				<choose>
+					<when test="qna_type.equals('전체')">
+						qna_type != 1
+					</when>
+					<otherwise>
+				 		 qna_type = #{qna_type}
+					</otherwise>
+				</choose>
+				  AND qna_subject LIKE #{searchObject} AND 
+		<choose>
+			<when test="qna_rep.equals('repno')">
+				  qna_rep IS NULL 
+			 </when>
+			<otherwise>
+				  qna_rep IS NOT NULL 
+			 </otherwise>
+		</choose>
+	</select>
+	
+	<select id="getQnaList" resultType="com.project.bookshop.vo.QnaVO">
+				SELECT * FROM qna 
+				 WHERE qna_date >= #{startDate} AND qna_date &lt;= #{endDate} AND
+				<choose>
+					<when test="qna_type.equals('전체')">
+						qna_type != 1
+					</when>
+					<otherwise>
+				 		 qna_type = #{qna_type}
+					</otherwise>
+				</choose>
+				  AND qna_subject LIKE #{searchObject} AND 
+		<choose>
+			<when test="qna_rep.equals('repno')">
+				  qna_rep IS NULL 
+			 </when>
+			<otherwise>
+				  qna_rep IS NOT NULL 
+			 </otherwise>
+		</choose>
+		<choose>
+				<when test="order_by.equals('DESC')">
+					 ORDER BY qna_date DESC  LIMIT #{qnaPageInfo.startRow}, #{qnaPageInfo.listLimit}
+				</when>
+				<otherwise>
+					 ORDER BY qna_date ASC  LIMIT #{qnaPageInfo.startRow}, #{qnaPageInfo.listLimit}
+				</otherwise>
+			</choose>
+	</select>
+	<select id="getQnaDetail" resultType="com.project.bookshop.vo.QnaVO">
+		SELECT * FROM qna WHERE qna_num = #{qna_num}
+	</select>
+	
+	<update id="repModify" >
+			UPDATE qna SET qna_rep = #{qna_rep} WHERE qna_num = #{qna_num}
+	</update>
+	
+	<select id="getUserListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM user WHERE user_date >= #{startDate} AND user_date &lt;= #{endDate} AND 
+		user_purchased >= #{startWon} AND user_purchased &lt;= #{endWon} AND 
+		user_gender = #{gender} AND 
+		<choose>
+			<when test="searchType.equals('전체')">
+				(user_name LIKE #{searchObject} OR user_email LIKE #{searchObject})
+			</when>
+			<when test="searchType.equals('user_name')">
+				user_name LIKE #{searchObject}
+			</when>
+			<when test="searchType.equals('user_email')">
+				user_email LIKE #{searchObject}
+			</when>
+		</choose>
+	</select>
+	
+	<select id="getUserList" resultType="com.project.bookshop.vo.UserVO">
+		SELECT * FROM user WHERE user_date >= #{startDate} AND user_date &lt;= #{endDate} AND 
+		user_purchased >= #{startWon} AND user_purchased &lt;= #{endWon} AND 
+		user_gender = #{gender} AND 
+				<choose>
+			<when test="searchType.equals('전체')">
+				(user_name LIKE #{searchObject} OR user_email LIKE #{searchObject})
+			</when>
+			<when test="searchType.equals('user_name')">
+				user_name LIKE #{searchObject}
+			</when>
+			<when test="searchType.equals('user_email')">
+				user_email LIKE #{searchObject}
+			</when>
+		</choose>
+		LIMIT #{userPageInfo.startRow}, #{userPageInfo.listLimit}
+	</select>
+	
+	<select id="getSales" resultType="com.project.bookshop.vo.OrdVO">
+		SELECT sum(order_price) AS order_price, order_date FROM ord
+		WHERE order_status != '결제취소' AND date(order_date) >= date(subdate(now(), INTERVAL 5 DAY)) and date(now()) >= date(order_date)
+		GROUP BY order_date
+		ORDER BY order_date
+	</select>
+	
+	<select id="getUserCount" resultType="com.project.bookshop.vo.UserVO">
+		SELECT COUNT(*) AS user_count, user_date FROM user
+		WHERE date(user_date) >= date(subdate(now(), INTERVAL 5 DAY)) and date(now()) >= date(user_date)
+		GROUP BY user_date
+		ORDER BY user_date
+	</select>
+	
+	<select id="getUserDetail" resultType="com.project.bookshop.vo.UserVO">
+		SELECT user_email, user_name, user_phone, user_gender, user_jumin, user_address_code, user_address, user_date 
+		FROM user 
+		WHERE user_num = #{user_num}
+	</select>
+
+	<select id="getMainAdList" resultType="com.project.bookshop.vo.MainAdVO"> 
+		SELECT * FROM main_ad
+	</select>
+	
+	<select id="getAdProductListCount" resultType="java.lang.Integer">
+		SELECT count(*) FROM product WHERE pd_subject LIKE #{productObject}
+	</select>
+	
+	<select id="getAdProductList" resultType="com.project.bookshop.vo.ProductVO">
+		SELECT * FROM product WHERE pd_subject LIKE #{productObject} LIMIT #{pageInfo.startRow},#{pageInfo.listLimit}
+	</select>
+	
+	<select id="selectAd" resultType="int">
+		SELECT COUNT(*) FROM main_ad WHERE ad_index = #{ad_index}
+	</select>
+	
+	<insert id="insertAd">
+		INSERT INTO main_ad VALUES(#{ad_index},#{ad_file},#{ad_subject})
+	</insert>
+	
+	<update id="changeAdPro">
+		UPDATE main_ad SET ad_file = #{ad_file}, ad_subject = #{ad_subject} WHERE ad_index = #{ad_index}
+	</update>
+
+	<select id="selectCenterAd" resultType="int">
+		SELECT COUNT(*) FROM center_ad WHERE ad_index = #{ad_index}
+	</select>
+	
+	<insert id="insertCenterAd">
+		INSERT INTO center_ad VALUES(#{ad_index}, #{ad_pd_num}, #{ad_content})
+	</insert>
+	
+	<update id="changeCenterAd">
+		UPDATE center_ad SET ad_pd_num = #{ad_pd_num}, ad_content = #{ad_content} WHERE ad_index = #{ad_index}
+	</update>
+
+	<select id="getCenterAdList" resultType="com.project.bookshop.vo.CenterAdVO">
+		SELECT c.ad_index, c.ad_pd_num, c.ad_content, p.pd_name, p.pd_price, p.pd_subject, p.pd_file FROM center_ad c 
+		LEFT JOIN product p ON c.ad_pd_num = p.pd_num
+	</select>
+
+</mapper>

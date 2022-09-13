@@ -1,0 +1,82 @@
+@charset "UTF-8";
+
+.myOrderDetail{
+	width: 900px;
+	margin: 0px auto;
+}
+
+.myOrderDetail table{
+	width: 800px;
+	border-collapse: collapse;
+	table-layout: fixed;
+    border-left: none;
+    border-right: none;
+    text-align: center;
+}
+
+
+
+
+.myOrderDetail input[type='button']:not(.noClick){
+	width: 100px;
+	height: 30px;
+	border-color: #199db3;
+    border-bottom-color: #168da1;
+    border-right-color: #168da1;
+    background-color: #199db3;
+    
+    position: relative;
+    padding: 0 7px;
+    text-align: center;
+    text-indent: 0;
+    border-radius: 3px;
+    border: solid 1px #ebebeb;
+    cursor: pointer;
+    
+    /* 폰트 */
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+}
+.myOrderDetail input[type='button']:hover:not(.noClick){
+	font-weight: thin;
+	color: #fafafa;
+	border-color: #719d9d;
+	background: #1981b3;
+}
+
+.myOrderDetail .review_button{
+	width: 70px !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

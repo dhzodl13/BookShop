@@ -1,0 +1,144 @@
+@charset "UTF-8";
+
+.star-rating_review {width:100px; }
+.star-rating_review,.star-rating_review span {display:inline-block; height:18px; overflow:hidden; background:url(../images/star_sp.png)no-repeat; }
+.star-rating_review span{background-position:left bottom; line-height:0; vertical-align:top; }
+
+.userMyReview {
+	width: 900px;
+	margin: 0px auto;
+}
+
+.reviewSection{
+	width: 900px;
+	margin-bottom: 50px;
+	
+}
+.reviewListSection{
+	border-top: 1px solid #c3c3c3;
+	border-bottom: 1px solid #c3c3c3;
+}
+
+.reviewSection table{
+	width: 900px;
+	border-collapse: collapse;
+	table-layout: fixed;
+	border-top: 1px solid #c3c3c3;
+}
+
+.reviewSection table:first-of-type{
+	border-top: none;
+}
+.reviewSection table td{
+	padding: 5px 20px;
+}
+.reviewSection table .title2{
+	background-color: #999;
+	font-size: 18px;
+	color: white;
+	font-weight: bold;
+}
+
+.reviewSection table .title{
+	font-size: 18px;
+	color: black;
+	font-weight: bold;
+}
+
+
+.star-rating_review {width:100px; }
+.star-rating_review,.star-rating_review span {display:inline-block; height:18px; overflow:hidden; background:url(../images/star_sp.png)no-repeat; }
+.star-rating_review span{background-position:left bottom; line-height:0; vertical-align:top; }
+
+.wrap-star_review{
+	display: inline;
+	
+}
+.reviewSection table td em{
+	font-size: 8px;
+	color: #c3c3c3;
+}
+
+.reviewSection h2{
+	text-align: center;
+	font-size: 30px;
+	font-weight: bold;
+	padding: 20px 0px;
+}
+
+
+
+.reviewListSection input[type=button]{
+	width: 110px;
+	height: 30px;
+	border-color: #199db3;
+    border-bottom-color: #168da1;
+    border-right-color: #168da1;
+    background-color: #199db3;
+    
+    position: relative;
+    padding: 0 7px;
+    text-align: center;
+    text-indent: 0;
+    border-radius: 3px;
+    border: solid 1px #ebebeb;
+    cursor: pointer;
+    
+    /* 폰트 */
+    color: white;
+    font-weight: bold;
+}
+
+.page {
+	margin: 30px;
+	text-align: center;
+}
+
+.page strong.num{
+	border: solid 1px #6699cc;
+    color: #fff;
+    background-color: #6699cc;
+}
+.page input.noClick {
+    background-color: #e3e3e3;
+    border-color: #e7f2fb;
+}
+.page .num{
+	vertical-align: top;
+	display: inline-block;
+    margin: 0 2px;
+    padding: 0 3px;
+    width: auto !important;
+    min-width: 22px;
+    _width: 28px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 12px;
+    vertical-align: top;
+    border: 1px solid #d6d6d6;
+    border-radius: 3px;
+    color: #999;
+    background-color: #fff;
+    text-decoration: none;
+}
+
+.page .num:not(.noClick):hover{
+	background-color:#e7f2fb;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,85 @@
+@charset "UTF-8";
+
+.login {width: 400px; position: absolute; left: 50%; top:50%;
+transform: translate(-50%, -50%);}
+
+
+.login .login_sides { font-size: 20px; width:200px;
+color: #999; 
+border: 1px solid #999;
+background-color:white;
+border-bottom:1px solid #fff;
+text-align: center; 
+position:relative;
+float:left;
+z-index: 1;
+cursor: pointer;
+}
+.login .on{ font-size: 20px; width:196px;
+color: #000000; 
+border:  1px solid #000000;
+background-color:white;
+border-bottom:1px solid #fff;
+text-align: center; 
+position:relative;
+float:left;
+z-index: 3;
+cursor: pointer;
+}
+
+
+.log_tit {position:relative;
+top:-0.5px;
+
+border-top: 1px solid #000000;
+padding: 0 0 12px;
+z-index: 2;
+
+
+}
+
+.log_tit>input[type=text] {
+	border:1px solid #999;
+	width: 100% ;
+	padding: 15px 0px;
+	margin-bottom: 10px;
+	margin-top: 10px;}
+
+	
+
+.log_tit>input[type=password]{
+	border:1px solid #999;
+	width: 100%;
+	padding: 15px 0px;
+}
+
+.submit{
+	position:relative;
+/*   background-color: #4376e6; */
+  background-color: #3d6dd6;
+  text-decoration:none;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 20px;
+}
+
+a {text-decoration: none;
+}
+
+nav a:link, nav a:visited {
+	color: #111;}
+nav a:hover, nav a:active {
+	color: #111;}
+	
+nav {display: flex;
+justify-content: center;
+margin-bottom: 20px;}
+
+.logo {
+	text-align: center;
+	margin-bottom: 40px;
+}

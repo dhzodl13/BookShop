@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.project.bookshop.mapper.UserMapper">
+
+	<select id="loginUser" resultType="com.project.bookshop.vo.UserVO">
+		SELECT * FROM user 
+		WHERE user_email=#{user_email} AND user_passwd=#{user_passwd} AND user_auth='Y'
+	</select>
+	
+	<select id="userMaxNum" resultType="java.lang.Integer">
+		SELECT MAX(user_num) FROM user;
+	</select>
+	
+	<insert id="joinUser">
+		INSERT INTO user VALUES 
+		(#{user_num}, #{user_name}, #{user_email}, #{user_passwd}, #{user_gender}, 
+		#{user_jumin}, #{user_address_code}, #{user_address}, #{user_phone}, now(), 0, 0,'Y');
+	</insert>
+	
+	<select id="selectDuplicateId" resultType="com.project.bookshop.vo.UserVO">
+		SELECT * FROM user 
+		WHERE user_email=#{user_email}
+	</select>
+	
+	<select id="getProductListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM product 
+		<choose>
+			<when test="pd_type.equals('all')">	
+				<choose>	
+					<when test="searchType.equals('subject')">
+						WHERE pd_subject LIKE #{search}
+					</when>
+					<when test="searchType.equals('writer')">
+						WHERE pd_name LIKE #{search}
+					</when>
+					<when test="searchType.equals('all')">
+						WHERE pd_subject LIKE #{search} OR pd_name LIKE #{search}
+					</when>
+					<otherwise>
+					</otherwise>
+				</choose>	
+			</when>
+			<when test="!pd_type.equals('all')">
+				<choose>	
+					<when test="searchType.equals('subject')">
+						WHERE pd_type=#{pd_type} AND pd_subject LIKE #{search}
+					</when>
+					<when test="searchType.equals('writer')">
+						WHERE pd_type=#{pd_type} AND pd_name LIKE #{search}
+					</when>
+					<when test="searchType.equals('all')">
+						WHERE pd_type=#{pd_type} AND pd_subject LIKE #{search} OR pd_name LIKE #{search}
+					</when>
+					<otherwise>
+						WHERE pd_type=#{pd_type}
+					</otherwise>
+				</choose>
+			</when>
+		</choose>
+		
+		<choose>
+			<when test="sort_type.equals('last')">
+				ORDER BY pd_num DESC
+			</when>
+			<when test="sort_type.equals('price')">
+				ORDER BY pd_price ASC, pd_price DESC
+			</when>
+			<when test="sort_type.equals('count')">
+				ORDER BY pd_count DESC, pd_count DESC
+			</when>
+		</choose>
+	</select>
+
+	
+	<select id="getProductList" resultType="com.project.bookshop.vo.ProductVO">
+		SELECT * FROM product 
+		<choose>
+		<when test="pd_type.equals('all')">
+			<choose>	
+					<when test="searchType.equals('subject')">
+						WHERE pd_subject LIKE #{search}
+					</when>
+					<when test="searchType.equals('writer')">
+						WHERE pd_name LIKE #{search}
+					</when>
+					<when test="searchType.equals('all')">
+						WHERE pd_subject LIKE #{search} OR pd_name LIKE #{search}	
+					</when>
+					<otherwise>
+					</otherwise>
+			</choose>
+		</when>
+		<when test="!pd_type.equals('all')">
+			<choose>	
+					<when test="searchType.equals('subject')">
+						WHERE pd_type=#{pd_type} AND pd_subject LIKE #{search}
+					</when>
+					<when test="searchType.equals('writer')">
+						WHERE pd_type=#{pd_type} AND pd_name LIKE #{search}
+					</when>
+					<when test="searchType.equals('all')">
+						WHERE pd_type=#{pd_type} AND pd_subject LIKE #{search} OR pd_name LIKE #{search}
+					</when>
+					<otherwise>
+						WHERE pd_type=#{pd_type}
+					</otherwise>
+				</choose>
+		</when>
+		</choose>
+		
+		<choose>
+		<when test="sort_type.equals('last')">
+			ORDER BY pd_num DESC
+		</when>
+		<when test="sort_type.equals('price')">
+			ORDER BY pd_price ASC, pd_price DESC
+		</when>
+		<when test="sort_type.equals('count')">
+			ORDER BY pd_count DESC, pd_count DESC
+		</when>
+		</choose>
+		LIMIT #{pageInfo.startRow},#{pageInfo.listLimit}
+	</select>
+
+	<select id="getProduct" resultType="com.project.bookshop.vo.ProductVO">
+		SELECT *,ROUND(AVG(review_score),1) AS avg_score FROM product left join review ON pd_num=review_pd_num WHERE pd_num = #{pd_num}
+	</select>
+	
+	<select id="getReviewListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM review WHERE review_user_num=(SELECT user_num FROM user WHERE user_email=#{sId})
+	</select>
+	
+	<select id="getReviewList" resultType="com.project.bookshop.vo.ReviewVO">
+		SELECT * FROM review,product WHERE review.review_pd_num=product.pd_num AND 
+		review_user_num=(SELECT user_num FROM user WHERE user_email=#{sId}) ORDER BY review_num desc LIMIT #{pageInfo.startRow},#{pageInfo.listLimit}
+	</select>
+	
+	<delete id="deleteMyReview">
+		DELETE FROM review WHERE review_num=#{review_num}
+	</delete>
+	
+	<select id="getReviewDetail" resultType="com.project.bookshop.vo.ReviewVO">
+		SELECT * FROM review WHERE review_num=#{review_num}
+	</select>
+	
+	<update id="modifyReview">
+		UPDATE review SET review_score=#{score},review_subject=#{subject},review_content=#{content} WHERE review_num=#{review_num}
+	</update>
+	
+	<select id="getPdReviewList" resultType="com.project.bookshop.vo.ReviewVO">
+		SELECT review_num, review_user_num, review_pd_num, review_subject, review_content, review_score, review_date, 
+		user_name, user_email
+		FROM review r LEFT JOIN user u ON r.review_user_num = u.user_num WHERE review_pd_num = #{pd_num} ORDER BY review_date DESC LIMIT #{pageInfo.startRow}, #{pageInfo.listLimit}
+	</select>
+	
+	<select id="getPdQnaList" resultType="com.project.bookshop.vo.QnaVO">
+		SELECT * FROM qna WHERE qna_pd_num = #{pd_num} AND qna_accesspermission = 'public' ORDER BY qna_date DESC LIMIT #{pageInfo.startRow}, #{pageInfo.listLimit}
+	</select>
+	
+	<select id="getReivewCount" resultType="int">
+		SELECT COUNT(*) FROM review WHERE review_pd_num = #{pd_num}
+	</select>
+	
+	<select id="getQnaCount" resultType="int">
+		SELECT COUNT(*) FROM qna WHERE qna_pd_num = #{pd_num}
+	</select>
+	
+	<select id="myOrder" resultType="com.project.bookshop.vo.OrdVO">
+		SELECT order_num, order_date, order_status, order_price FROM ord 
+		WHERE order_user_email=#{sId} 
+		ORDER BY order_num DESC
+	</select>
+	
+	<select id="myOrderSearchDate" resultType="com.project.bookshop.vo.OrdVO">
+		SELECT order_num, order_date, order_status, order_price FROM ord 
+		WHERE order_user_email=#{sId}  AND order_date>=#{startday} AND order_date&lt;= #{endday} 
+		ORDER BY order_date DESC
+	</select>
+	
+	<select id="myOrderDetail" resultType="com.project.bookshop.vo.OrdDetailVO">
+		SELECT order_num,order_pd_num, pd_file ,pd_subject, pd_price, order_quan, order_pd_price FROM ordDetail,product 
+		WHERE ordDetail.order_pd_num=product.pd_num AND order_num=#{order_num}
+	</select>
+	
+	<update id="myOrderCancel">
+		UPDATE ord 
+		SET order_status='결제취소' WHERE order_num=#{order_num}
+	</update>
+	
+	<select id="selectOrder" resultType="com.project.bookshop.vo.OrdVO">
+		SELECT * FROM ord 
+		WHERE order_num=#{order_num}
+	</select>
+	
+	<update id="userOrderCancel">
+		UPDATE user 
+		SET user_purchased=user_purchased-#{ord.order_price}, 
+		user_points=user_points+#{ord.order_mileage}
+		WHERE user_email=#{ord.order_user_email}
+	</update>
+	
+	<select id="myOrderDetailList" resultType="com.project.bookshop.vo.OrdDetailVO">
+		SELECT order_pd_num, order_quan FROM ordDetail 
+		WHERE order_num=#{order_num}
+	</select>
+	
+	<update id="orderDetailOrderCancel">
+		UPDATE product 
+		SET pd_count=pd_count-#{ordDetail.order_quan}, pd_quan=pd_quan+#{ordDetail.order_quan} 
+		WHERE pd_num=#{ordDetail.order_pd_num}
+	</update>
+	
+	<select id="MyOrderCancelRefundView" resultType="com.project.bookshop.vo.OrdVO">
+		SELECT * FROM ord 
+		WHERE order_num=#{order_num}
+	</select>
+	
+	<select id="sIdToUserVO" resultType="com.project.bookshop.vo.UserVO">
+		SELECT * FROM user 
+		WHERE user_email=#{sId}
+	</select>
+	
+	<select id="getReviewVO" resultType="com.project.bookshop.vo.ReviewVO">
+		SELECT * FROM review 
+		WHERE review_user_num=#{user_num} AND review_pd_num=#{pd_num}
+	</select>
+
+	<select id="getReviewMaxNum" resultType="java.lang.Integer">
+		SELECT MAX(review_num) FROM review 
+	</select>
+
+	<insert id="WriteReview">
+		INSERT INTO review(review_num, review_user_num, review_pd_num, review_subject, review_content, review_score, review_date) 
+		 VALUES (#{max_review_num}, #{user_num}, #{pd_num}, #{subject}, #{content}, #{score}, now())
+	</insert>
+	
+	<select id="getUserEmail" resultType="com.project.bookshop.vo.UserVO">
+		SELECT * FROM user 
+		WHERE user_name=#{name} AND user_jumin=#{jumin}
+	</select>
+	
+	<select id="getUserPasswd" resultType="com.project.bookshop.vo.UserVO">
+		SELECT * FROM user 
+		WHERE user_email=#{email} AND user_jumin=#{jumin}
+	</select>
+	
+	<select id="getCartListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM cart WHERE cart_user_num=(SELECT user_num FROM user WHERE user_email=#{sId})
+	</select>
+	
+	<insert id="cartOn">
+		INSERT INTO cart VALUES((SELECT user_num FROM user WHERE user_email=#{sId}),#{pd_num},#{quantity})
+	</insert>
+	
+	<select id="cartList" resultType="com.project.bookshop.vo.ProductVO">
+	SELECT pd_num, pd_name, pd_price, pd_file, pd_subject, pd_quan, cart_pd_quan FROM product,cart
+		WHERE product.pd_num=cart.cart_pd_num AND cart_user_num=(SELECT user_num FROM user WHERE user_email=#{sId})
+	</select>
+	
+	<delete id="cartDel">
+		DELETE FROM cart WHERE cart_pd_num=#{pd_num} and cart_user_num=(SELECT user_num FROM user WHERE user_email=#{sId})
+	</delete>
+	
+	<select id="existInterest" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM interest WHERE inter_user_num=(SELECT user_num FROM user WHERE user_email=#{sId}) AND inter_pd_num=#{pd_num}
+	</select>
+	
+	<insert id="InterestOn">
+		INSERT INTO interest VALUES((SELECT user_num FROM user WHERE user_email=#{sId}),#{pd_num})
+	</insert>
+	
+	<select id="InterList" resultType="com.project.bookshop.vo.ProductVO">
+		SELECT pd_num,pd_name,pd_price,pd_file,pd_subject FROM product,interest
+				WHERE product.pd_num=interest.inter_pd_num AND inter_user_num=(SELECT user_num FROM user WHERE user_email=#{sId})
+	</select>
+	
+	<delete id="InterDel">
+		DELETE FROM interest WHERE inter_pd_num=#{pd_num} and inter_user_num=(Select user_num FROM user WHere user_email=#{sId})
+	</delete>
+	
+	<select id="ProductCountRank" resultType="com.project.bookshop.vo.ProductVO">
+		SELECT * FROM product ORDER BY pd_count DESC LIMIT 6
+	</select>
+	
+	<update id="cartChan">
+		update cart set cart_pd_quan=#{quan} where cart_pd_num=#{pd_num} and cart_user_num=(SELECT user_num FROM user WHERE user_email=#{sId})
+	</update>
+	
+	<select id="getUserPoints" resultType="java.lang.Integer">
+		select user_Points from user where user_email = #{sId}
+	</select>
+	
+	<select id="getOrderNum" resultType="java.lang.Integer">
+		select max(order_num)+1 from ord
+	</select>
+
+	<insert id="insertOrd">
+		insert into ord values (#{ord_num}, #{sId}, now(), default, #{totalPrice}, #{point})
+	</insert>
+	
+	<insert id="insertOrddetail">
+      insert into orddetail values
+      (#{ord_num},#{split_pd_nums},(select cart_pd_quan from cart where cart_pd_num=#{split_pd_nums} AND cart_user_num=(SELECT user_num FROM user WHERE user_email=#{sId})), 
+      (select (cart_pd_quan * pd_price) AS price FROM cart,product WHERE cart.cart_pd_num=product.pd_num AND cart_user_num=(SELECT user_num FROM user WHERE user_email=#{sId})
+      AND cart_pd_num=#{split_pd_nums}))   
+   </insert>
+   
+   <update id="updateProduct">
+      UPDATE product set pd_count=pd_count+(SELECT cart_pd_quan FROM cart WHERE cart_pd_num=#{split_pd_nums} and cart_user_num=(select user_num from user where user_email=#{sId})),
+      pd_quan=pd_quan-(SELECT cart_pd_quan FROM cart WHERE cart_pd_num=#{split_pd_nums} and cart_user_num=(select user_num from user where user_email=#{sId})) where pd_num=#{split_pd_nums}
+      
+      <!-- "UPDATE product set pd_count=pd_count+(SELECT cart_pd_quan FROM cart WHERE cart_pd_num=? AND cart_user_num=?),"
+                            + " pd_quan=pd_quan-(SELECT cart_pd_quan FROM cart WHERE cart_pd_num=? AND cart_user_num=?) WHERE pd_num=?"; -->
+   </update>
+	
+	<delete id="deleteCart">
+		delete from cart where cart_pd_num=#{split_pd_nums} and cart_user_num=(select user_num from user where user_email=#{sId})
+	</delete>
+	<select id="getUserNum" resultType="java.lang.Integer">
+		select user_num from user where user_email=#{sId}
+	</select>
+	
+	<update id="updateUser">
+		update user set user_purchased=user_purchased+#{totalPrice}, user_points=user_points-#{point} where user_num=#{user_num}
+	</update>
+	
+	<select id="existCart" resultType="java.lang.Integer">
+		SELECT count(*) FROM cart WHERE cart_pd_num=#{pd_num} AND cart_user_num=(SELECT user_num FROM user WHERE user_email=#{sId})
+	</select>
+	
+	<update id="addCartQuan">
+		UPDATE cart SET cart_pd_quan= cart_pd_quan + #{quantity} WHERE cart_pd_num=#{pd_num} AND cart_user_num=(SELECT user_num FROM user WHERE user_email=#{sId}) 
+	</update>
+	
+	<select id="userCheckCount" resultType="java.lang.Integer">
+		SELECT * FROM user 
+		WHERE user_email=#{sId} AND user_passwd=#{passwd} AND user_auth='Y'
+	</select>
+	
+	<!-- 	고객 센터 -->
+	<select id="getQnaListCount" resultType="int">
+			<choose>
+				<when test="qap.equals('public')">
+						SELECT COUNT(*) FROM qna WHERE qna_accesspermission = #{qap} ORDER BY qna_num DESC
+				</when>
+				<when test="qap.equals('private')">
+						SELECT COUNT(*) FROM qna WHERE qna_accesspermission = #{qap} AND qna_user_email = #{sId} ORDER BY qna_num DESC
+				</when>
+			</choose>
+	</select>
+	<select id="getQnaList" resultType="com.project.bookshop.vo.QnaVO">
+			<choose>
+				<when test="qap.equals('public')">
+						SELECT * FROM qna WHERE qna_accesspermission = #{qap} ORDER BY qna_num DESC LIMIT #{qnaPageInfo.startRow}, #{qnaPageInfo.listLimit}
+				</when>
+				<when test="qap.equals('private')">
+						SELECT * FROM qna WHERE qna_accesspermission = #{qap} AND qna_user_email = #{sId} ORDER BY qna_num DESC LIMIT #{qnaPageInfo.startRow}, #{qnaPageInfo.listLimit}
+				</when>
+			</choose>
+	</select>	
+
+	
+	<select id="getQnaDetail" resultType="com.project.bookshop.vo.QnaVO">
+		SELECT * FROM qna WHERE qna_num = #{qna_num}
+	</select>
+
+	<select id="getSelectProductCount" resultType="int">
+		SELECT COUNT(*) FROM product WHERE pd_subject LIKE #{productObject}
+	</select>
+	
+	<select id="getSelectProductList" resultType="com.project.bookshop.vo.ProductVO">
+		SELECT * FROM product WHERE pd_subject LIKE #{productObject} LIMIT #{qnaPageInfo.startRow}, #{qnaPageInfo.listLimit}
+	</select>
+	
+	<insert id="qnaInsert">
+		INSERT INTO qna VALUES((SELECT qna_num FROM( SELECT MAX(qna_num) +1 AS qna_num from qna) qna_num),
+		 #{qna_user},
+		  #{qna_subject},
+		  #{qna_content},
+		  now(),
+		  #{qna_pd_num},
+		 #{qna_user_email},
+		 #{qna_type},
+		 NULL,
+		 #{qna_accesspermission})
+	</insert>
+	
+	<update id="MyInfoModifyPro">
+		update user set user_name=#{name}, 
+		user_passwd=#{passwd},
+		user_address_code=#{address_code},
+		user_address=#{address},
+		user_phone=#{phone} where user_email=#{sId}
+	</update>
+	
+	<select id="UserAuthenLoginCheck" resultType="java.lang.Integer">
+		SELECT count(*) FROM user 
+		WHERE user_email=#{sId} AND user_passwd=#{passwd} AND user_auth='Y'
+	</select>
+	
+	<select id="userInfoChecked" resultType="com.project.bookshop.vo.UserVO">
+		select * from user where user_email=#{sId}
+	</select>
+	
+	<delete id="MyInfoDelPro">
+		delete from user where user_email=#{sId}
+	</delete>
+	
+</mapper>

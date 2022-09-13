@@ -1,0 +1,26 @@
+@charset "UTF-8";
+
+.wrapper{
+	width: 900px;
+	margin: auto;
+	margin-top: 200px;	
+	background: #f5f5f5;
+}
+
+.text{
+	width: 300px;
+	border: 1px solid;	
+	border-radius: 10px;
+	height: 40px;
+	margin-bottom: 40px;
+	margin-left: 300px;
+	margin-top: 20px;
+	background: none;
+	text-align: center;
+	}
+
+.file {
+	margin-left: 300px;
+}
+
+
